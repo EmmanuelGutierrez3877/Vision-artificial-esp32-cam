@@ -3,10 +3,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 from random import randrange,random
 
-def EvolucionDiferencial(img,img2):
+def EvolucionDiferencial(img_o,img2_o):
 
-    img=img.resize((100, 75))    
-    img2=img2.resize((100, 75))
+    escalado=8
+    img=img_o.resize(( int(img_o.size[0]/escalado), int(img_o.size[1]/escalado) ))    
+    img2=img2_o.resize(( int(img2_o.size[0]/escalado), int(img2_o.size[1]/escalado) ))
+    #imagen original de 800 x 600, del tamaño se dividio entre 8
 
     img_g = img.convert('LA')
     img2_g = img2.convert('LA')
@@ -87,21 +89,44 @@ def EvolucionDiferencial(img,img2):
         #print(G)
     
     mejorParticula=particulas[:,1] #la mejor particula de esta generacion es la primera
+    vmp = NCC(img_g,img2_g,mejorParticula[0],mejorParticula[1],temp_H,temp_W) #valor de la mejor particula
+    
     for i in range (0,N):
-        if (NCC(img_g,img2_g,particulas[0,i],particulas[1,i],temp_H,temp_W) < NCC(img_g,img2_g,mejorParticula[0],mejorParticula[1],temp_H,temp_W)):  #si alguna de esta generacion es mejor que la anterior la remplaza
+        vsp = NCC(img_g,img2_g,particulas[0,i],particulas[1,i],temp_H,temp_W)#valor de la siguiente particula
+        if (vsp < vmp ):  #si alguna de esta generacion es mejor que la anterior la remplaza
             mejorParticula=particulas[:,i]
+            vmp=vsp
         
     xp=mejorParticula[0];
     yp=mejorParticula[1];
     zp=NCC(img_g,img2_g,mejorParticula[0],mejorParticula[1]);
     
     if (zp < .90 ):
+        
+        """#Prueba resize
+        print("posicion: ",xp,yp)
+        print(zp);
+        plt.figure()
+        plt.imshow(img2)
+        plt.plot([xp, xp+temp_H], [yp, yp],'r-')
+        plt.plot([xp, xp], [yp, yp+temp_W],'r-');
+        plt.plot([xp+temp_H, xp+temp_H], [yp, yp+temp_W],'r-')
+        plt.plot([xp, xp+temp_H], [yp+temp_W, yp+temp_W],'r-')
+        plt.show()
+        #"""
+        
+        xp=xp*escalado
+        yp=yp*escalado
+        temp_H=temp_H*escalado
+        temp_W=temp_W*escalado
+        #para pasar la coordenada a la imagen origunal se multiplica por 8, ya que fue la escala que le reducimos
+        
         print("posicion: ",xp,yp)
         print(zp);
         print("diferencia\n")
         
         plt.figure()
-        plt.imshow(img2)
+        plt.imshow(img2_o)
         plt.plot([xp, xp+temp_H], [yp, yp],'r-')
         plt.plot([xp, xp], [yp, yp+temp_W],'r-');
         plt.plot([xp+temp_H, xp+temp_H], [yp, yp+temp_W],'r-')
@@ -110,6 +135,12 @@ def EvolucionDiferencial(img,img2):
         plt.show()
         return('true')
     else:
+        xp=xp*escalado
+        yp=yp*escalado
+        temp_H=temp_H*escalado
+        temp_W=temp_W*escalado
+        #para pasar la coordenada a la imagen origunal se multiplica por 8, ya que fue la escala que le redugimos
+        
         print("posicion: ",xp,yp)
         print(zp);
         print("sin diferencia\n")
