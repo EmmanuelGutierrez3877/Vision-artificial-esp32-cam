@@ -12,6 +12,7 @@
 
 
     <?php 
+        echo phpversion();
         ini_set('max_execution_time',0);
         //$conex = mysqli_connect("localhost","root","","Camara");
         $conex = mysqli_connect("sql10.freemysqlhosting.net","sql10414886","ezeL3RqZWt","sql10414886");
@@ -26,10 +27,10 @@
 
 
     <div id="foto" class="col-xs-11 col-sm-11 col-lg-7">
-        <?php echo($foto['fecha']) ?>
-        <?php 
-                echo ('<img style="max-height: 100%; max-width: 100%;" src="data:image/jpeg;base64,'.base64_encode( $foto['imagen'] ).'"/>');
-            ?>
+        <?php echo($foto['fecha']);
+            echo $foto['imagen'];
+            echo ('<img style="max-height: 100%; max-width: 100%;" src="data:image/jpeg;base64,'.base64_encode( $foto['imagen'] ).'"/>');
+        ?>
     </div>
 
 
