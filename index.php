@@ -14,7 +14,7 @@
     <?php 
         ini_set('max_execution_time',0);
         //$conex = mysqli_connect("localhost","root","","Camara");
-        $conex = mysqli_connect("sql10.freemysqlhosting.net","sql10414886","sql10414886","Camara");
+        $conex = mysqli_connect("sql10.freemysqlhosting.net","sql10414886","ezeL3RqZWt","Camara");
 
         while(1==1){
             $consulta = "SELECT * FROM `imagenes` ORDER BY `imagenes`.`fecha` DESC";
