@@ -2,8 +2,12 @@ from NCC import NCC
 import matplotlib.pyplot as plt
 import numpy as np
 from random import randrange,random
+import mysql.connector
+import datetime
+import os
 
 def EvolucionDiferencial(img_o,img2_o):
+    
 
     escalado=8
     img=img_o.resize(( int(img_o.size[0]/escalado), int(img_o.size[1]/escalado) ))    
@@ -132,8 +136,9 @@ def EvolucionDiferencial(img_o,img2_o):
         plt.plot([xp+temp_H, xp+temp_H], [yp, yp+temp_W],'r-')
         plt.plot([xp, xp+temp_H], [yp+temp_W, yp+temp_W],'r-')
         #plt.savefig('foo.png')
-        plt.show()
-        return('true')
+        senddb(plt,zp)
+        #plt.show()
+        return("Diferencia:"+str(zp))
     else:
         xp=xp*escalado
         yp=yp*escalado
@@ -144,4 +149,31 @@ def EvolucionDiferencial(img_o,img2_o):
         print("posicion: ",xp,yp)
         print(zp);
         print("sin diferencia\n")
-        return('false')
+        return("Sin diferencia:"+str(zp))
+    
+def senddb(plt,zp):
+
+    plt.savefig('foo.png',dpi=300, bbox_inches='tight')
+    path=os.getcwd().replace("\\", "/")
+    
+    connection = mysql.connector.connect(
+        host='localhost',
+        database='Camara',
+        user='root',
+        password='')
+    
+    cursor = connection.cursor()
+    
+    hora = datetime.datetime.now()
+    
+    #print(insert,hora)
+    #cursor.execute("insert into imagenes(id, fecha, imagen) values(Null, '%s', Null)",(hora.strftime('%Y-%m-%d %H:%M:%S')))
+    #cursor.execute("insert into imagenes(id, fecha, imagen) values(Null, '"+hora.strftime('%Y-%m-%d %H:%M:%S')+"', load_file('"+"C:\\foo.png"+"'))")
+    cursor.execute("insert into imagenes(id, fecha, imagen,NCC) values(Null, '"+hora.strftime('%Y-%m-%d %H:%M:%S')+"',LOAD_FILE('"+path+"/foo.png"+"'),'"+str(zp)+"')")
+    connection.commit()
+    cursor.close()
+    connection.close()
+    
+    
+    
+    
